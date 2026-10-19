@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Chats">
+<link rel="manifest" href="manifest.webmanifest"><title>Chats</title>
+<style>
+:root{--bg:#080808;--panel:#191919;--line:#292929;--text:#f5f5f5;--muted:#9a9a9a;--green:#075e54;--lime:#25d366}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer;color:inherit;border:0}button:focus-visible,input:focus-visible{outline:2px solid #25d366}
+.app{height:100dvh;max-width:800px;margin:auto;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);background:var(--bg)}
+#listScreen{display:flex;flex-direction:column;flex:1;min-height:0}.top{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 0}.topActions{display:flex;gap:12px}.iconbtn{width:50px;height:50px;border-radius:50%;background:#202020;font-size:24px;display:grid;place-items:center}.pageTitle{font-size:42px;line-height:1.1;margin:20px 20px 22px;font-weight:750}.tabs{display:flex;gap:8px;overflow-x:auto;padding:0 16px 14px;scrollbar-width:none}.filter{white-space:nowrap;background:#171717;border:1px solid #333;border-radius:24px;padding:11px 17px;color:#aaa;font-weight:600}.filter.active{background:#4a4a4d;color:white}.filter span{font-size:12px}.listHead{padding:8px 16px 12px}.search{width:100%;padding:13px 16px;background:#1b1b1b;color:white;border:0;border-radius:14px;font-size:16px}.chatlist{flex:1;min-height:0;overflow:auto} .unreadBadge{display:inline-flex;min-width:20px;height:20px;padding:0 6px;align-items:center;justify-content:center;border-radius:999px;background:#25d366;color:#062d25;font-size:12px;font-weight:800;margin:4px 0 0 auto}.chatRight{margin-left:auto;align-self:stretch;min-width:42px;display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-start}.chatRight .time{margin-left:0}.chatitem .chatname{display:flex;align-items:center;gap:6px}.chatitem .unreadBadge{flex-shrink:0}.sampleMediaCard{display:block;min-width:160px;max-width:220px;padding:10px;border-radius:10px;background:#2a3430;border:1px dashed #6c8b7c;margin-top:5px}.sampleMediaCard .sampleArt{height:80px;border-radius:8px;background:linear-gradient(135deg,#4a7665,#b8d5c5);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:6px}.sampleMediaCard small{display:block;color:#d0e0d7;font-size:10px}.quickExitBtn{color:#ffb4a9!important;font-weight:800}
+.chatitem{display:flex;align-items:center;gap:13px;padding:13px 17px;border-bottom:1px solid #202020;min-height:82px}.avatar{width:54px;height:54px;flex-shrink:0;border-radius:50%;background:#473a2b;display:grid;place-items:center;font-size:23px;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.chatinfo{flex:1;min-width:0}.chatname{font-size:16px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.last{font-size:13px;color:#999;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.time{align-self:flex-start;margin-left:auto;color:var(--lime);font-size:12px;white-space:nowrap}.archived{display:flex;align-items:center;gap:18px;padding:17px 25px;color:#999;border-bottom:1px solid #292929}.archived strong{font-size:18px;flex:1}.foot{display:flex;justify-content:space-around;align-items:center;background:#171717;border:1px solid #333;border-radius:28px;margin:8px 12px 10px;padding:8px 2px;min-height:70px}.navitem{display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;color:#ccc;font-size:22px;min-width:50px}.navitem small{font-size:10px}.navitem.selected{background:#2c2c2c;border-radius:18px;padding:5px 12px;color:white}
+.chatview{display:none;flex:1;min-height:0;flex-direction:column}.chathead{height:76px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:10px;background:#191919;border-bottom:1px solid #292929}.back{background:#222;border-radius:50%;width:42px;height:42px;font-size:26px}.chathead .avatar{width:48px;height:48px}.headinfo{flex:1;min-width:0}.headname{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.online{font-size:12px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}.headAction{background:#222;border-radius:22px;padding:10px}.status{display:none;background:#392023;color:#ffb4ab;padding:8px;font-size:12px}.status.on{display:block}.previewWrap{display:none;padding:8px;background:#102a27}.previewWrap.show{display:block}#preview{width:100%;max-height:160px;object-fit:cover;transform:scaleX(-1)}.messages{flex:1;min-height:0;overflow:auto;padding:12px 10px;display:flex;flex-direction:column;gap:8px;background-color:#0b0b0b;background-image:radial-gradient(#ffffff08 .7px,transparent .7px);background-size:14px 14px}.day{align-self:center;background:#262626;border-radius:12px;padding:5px 12px;font-size:11px;color:#bbb;margin-bottom:4px}.row{display:flex;width:100%}.row.bot{justify-content:flex-end}.row.user{justify-content:flex-start}.bubble{max-width:84%;padding:9px 12px 6px;border-radius:14px;background:#252525;line-height:1.4;overflow-wrap:anywhere;font-size:15px}.user .bubble{background:#075e54}.meta{font-size:10px;color:#bbb;text-align:right;margin-top:4px}.stickerBubble{font-size:43px;background:transparent!important;padding:3px}.mediaLink{display:block;background:transparent;color:#8debd4;text-align:left;padding:7px 0 0;font-size:12px}.mediaPanel{display:none;max-height:180px;overflow:auto;background:#171717;padding:10px}.mediaPanel.show{display:block}.mediaItem{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #333;padding:9px 2px;font-size:12px}.mediaItem a{color:#6ee7d0}.mediaItem button{background:transparent;color:#ff9e9e}.composer{display:flex;align-items:center;gap:6px;padding:9px 8px;background:#0b0b0b}.field{flex:1;min-width:0;background:#252525;border-radius:25px;padding:12px 14px}#entry{width:100%;border:0;outline:0;background:transparent;color:white;font-size:16px;direction:auto}.smallbtn{background:transparent;color:white;font-size:23px;min-width:34px;height:42px}.round{width:42px;height:42px;border-radius:50%;background:#25d366;color:#062d25;font-size:20px;flex-shrink:0}.note{display:none}#stickerPanel{display:none;background:#202020;padding:10px;grid-template-columns:repeat(6,1fr);gap:8px}#stickerPanel.show{display:grid}.sticker{font-size:28px;background:#333;border-radius:12px;padding:8px}.settingsShade,.modalShade{display:none;position:fixed;inset:0;z-index:10;background:#000b;align-items:stretch;justify-content:flex-end}.settingsShade.show,.modalShade.show{display:flex}.settingsPanel{width:100%;max-width:560px;background:#101010;display:flex;flex-direction:column}.settingsPanel header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #333}.settingsPanel h2{margin:0;font-size:24px}.settingsBody{overflow:auto;padding:8px 16px}.settingRow{display:flex;align-items:center;gap:14px;width:100%;padding:16px 6px;border:0;border-bottom:1px solid #292929;background:transparent;color:white;text-align:left;font-size:18px}.settingRow span{display:flex;flex-direction:column;gap:5px;flex:1}.settingRow small{font-size:13px;line-height:1.45;color:#aaa}.modalShade{align-items:center;justify-content:center;padding:20px}.modal{width:100%;max-width:380px;background:#202020;border-radius:16px;padding:18px}.modal input{width:100%;padding:12px;border:1px solid #555;border-radius:9px;background:#111;color:white}.modalActions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}.modalActions button{padding:9px 14px;border-radius:9px;background:#333}.modalActions .ok{background:#25d366;color:#062d25}.hiddenFile{display:none}.toast{position:fixed;left:50%;bottom:95px;transform:translateX(-50%);z-index:20;background:#333;color:white;padding:10px 16px;border-radius:12px;max-width:90%;display:none}.toast.show{display:block}
+@media(min-width:700px){.app{border-left:1px solid #222;border-right:1px solid #222}.pageTitle{font-size:38px}}
+
+.galleryLockShade{display:none;position:fixed;inset:0;z-index:60;background:#080808f5;align-items:center;justify-content:center;padding:24px}.galleryLockShade.show{display:flex}.galleryLockCard{width:100%;max-width:360px;background:#202020;border:1px solid #444;border-radius:18px;padding:22px;color:#fff}.galleryLockCard input{width:100%;box-sizing:border-box;background:#111;color:#fff;border:1px solid #555;border-radius:10px;padding:12px;margin:10px 0}.galleryLockCard button{background:#25d366;color:#062d25;border-radius:10px;padding:11px 14px;font-weight:700}.galleryShade{display:none;position:fixed;inset:0;z-index:30;background:#080808;align-items:stretch;justify-content:center}.galleryShade.show{display:flex}.galleryPanel{width:100%;max-width:800px;display:flex;flex-direction:column;background:#080808;color:#fff}.galleryPanel header{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #333}.galleryPanel h2{margin:0;font-size:20px;flex:1}.galleryHint{margin:0;padding:12px 15px;background:#151515;color:#bbb;font-size:13px;line-height:1.5}.autoSaveRow{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid #292929;font-size:13px;color:#eee}.autoSaveRow input{width:20px;height:20px;accent-color:#25d366}.galleryGrid{padding:10px;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}.galleryCard{border:1px solid #303030;background:#171717;border-radius:12px;overflow:hidden;min-width:0}.galleryPreview{width:100%;height:160px;object-fit:cover;display:block;background:#222}.galleryMeta{padding:9px;font-size:12px;color:#ddd;overflow-wrap:anywhere}.galleryButtons{display:flex;gap:7px;padding:0 9px 10px}.galleryButtons a,.galleryButtons button{flex:1;text-align:center;border-radius:8px;padding:9px 3px;font-size:12px;text-decoration:none;border:0}.galleryButtons a{background:#075e54;color:#fff}.galleryButtons button{background:#3a2222;color:#ffb4ab}.galleryEmpty{grid-column:1/-1;text-align:center;color:#999;padding:45px 10px;line-height:1.6}
+.saveChoiceActions{display:flex;gap:8px;margin-top:9px}.saveChoiceActions button,.saveChoiceNo{min-width:54px;padding:7px 16px;border-radius:18px;font-weight:700}.saveChoiceYes{background:#25d366;color:#062d25}.saveChoiceNo{background:#454545;color:#fff}.saveChoiceActions button:disabled{opacity:.55}
+.previewWrap.smallPreview{position:fixed;right:12px;top:110px;width:120px;height:120px;z-index:30;border:2px solid #25d366;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 8px 28px #0009}.previewWrap.smallPreview video{width:100%;height:100%;object-fit:cover}.previewWrap.smallPreview div{display:none}
+.previewWrap .previewToolbar{display:none}
+.previewWrap.smallPreview .previewToolbar{display:flex;position:absolute;inset:auto 4px 4px 4px;gap:4px;justify-content:center;z-index:2}
+.previewWrap.smallPreview .previewToolbar button{background:#111d;color:#fff;border:1px solid #ffffff66;border-radius:7px;padding:4px 7px;font-size:12px;line-height:1.2}
+.previewWrap.smallPreview{position:fixed;right:12px;top:110px;width:120px;height:120px;z-index:30;padding:0;border:2px solid #25d366;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 8px 28px #0009}
+.previewWrap.smallPreview video{width:100%;height:100%;max-height:none;object-fit:cover}
+.previewWrap.smallPreview.preview-size-small{width:96px;height:96px}
+.previewWrap.smallPreview.preview-size-medium{width:140px;height:140px}
+.previewWrap.smallPreview.preview-size-large{width:190px;height:190px}
+.previewWrap.smallPreview.preview-pos-top-left{left:12px;right:auto;top:110px;bottom:auto}
+.previewWrap.smallPreview.preview-pos-top-right{right:12px;left:auto;top:110px;bottom:auto}
+.previewWrap.smallPreview.preview-pos-bottom-left{left:12px;right:auto;bottom:120px;top:auto}
+.previewWrap.smallPreview.preview-pos-bottom-right{right:12px;left:auto;bottom:120px;top:auto}
+.previewToggleBtn{font-size:15px!important}
+.previewWrap.smallPreview.preview-size-small{width:96px;height:96px}
+.previewWrap.smallPreview.preview-size-medium{width:140px;height:140px}
+.previewWrap.smallPreview.preview-size-large{width:190px;height:190px}
+.previewWrap.smallPreview.preview-pos-top-left{left:12px;right:auto;top:110px;bottom:auto}
+.previewWrap.smallPreview.preview-pos-top-right{right:12px;left:auto;top:110px;bottom:auto}
+.previewWrap.smallPreview.preview-pos-bottom-left{left:12px;right:auto;bottom:120px;top:auto}
+.previewWrap.smallPreview.preview-pos-bottom-right{right:12px;left:auto;bottom:120px;top:auto}
+.cameraControls{display:none;background:#171717;border-top:1px solid #333;padding:10px;gap:9px;flex-direction:column}.cameraControls.show{display:flex}.cameraControlHead,.cameraControlRow{display:flex;align-items:center;gap:8px}.cameraControlHead strong{flex:1}.cameraControlHead button,.cameraControlRow button{background:#303030;border-radius:10px;padding:9px 12px}.cameraControlRow label{white-space:nowrap;font-size:13px;color:#ddd}.cameraControlRow input[type=range]{flex:1;min-width:60px;accent-color:#25d366}.cameraModes button,.cameraActions button{flex:1;font-size:12px}.cameraControlRow button:disabled{opacity:.4}.cameraHint{color:#aaa;font-size:11px;line-height:1.4}
+</style></head><body><div class="app">
+<div id="listScreen"><div class="top"><button class="iconbtn" id="topMenu" aria-label="Help">•••</button><div class="topActions"><button class="iconbtn" id="cameraShortcut" aria-label="Camera">📷</button><button class="iconbtn" id="newChat" aria-label="New chat">＋</button></div></div><h1 class="pageTitle">Chats</h1>
+<div class="tabs" id="filterTabs"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="unread">Unread <span id="unreadCount">0</span></button><button class="filter" data-filter="favorites">Favorites</button><button class="filter" data-filter="groups">Groups <span id="groupCount">0</span></button></div>
+<div class="listHead"><input class="search" id="search" placeholder="Search or start a new chat"></div><div class="chatlist" id="chatlist"></div><div class="archived" id="archivedRow"><span>▤</span><strong>Archived</strong><span id="archivedCount">0</span></div>
+<div class="foot"><button class="navitem">◉<small>Updates</small></button><button class="navitem">♧<small>Calls</small></button><button class="navitem">▣<small>Tools</small></button><button class="navitem selected">●<small>Chats</small></button><button class="navitem" id="openSettings">⚙<small>Settings</small></button></div></div>
+<section class="chatview" id="chatScreen"><header class="chathead"><button class="back" id="back">‹</button><div class="avatar" id="headAvatar">A</div><div class="headinfo"><div class="headname" id="headName"></div><div class="online" id="headSubtitle">online</div></div><button class="headAction" id="rename" title="Rename">✎</button><button class="headAction" id="pickAvatar" title="Change chat photo">📷</button><input type="file" id="avatarFile" class="hiddenFile" accept="image/*"><button class="headAction" id="showMedia" title="Media gallery">▣</button><button class="headAction quickExitBtn" id="quickExit" title="Quick exit / stop camera">⏻</button></header>
+<div id="recordStatus" class="status">🔴 Video recording — tap Stop in Camera Control</div>
+<div id="previewWrap" class="previewWrap"><video id="preview" autoplay playsinline muted></video><div>Camera preview is visible while in use</div><div class="previewToolbar"><button type="button" id="previewMove" title="Move preview">↔</button><button type="button" id="previewResize" title="Resize preview">↗</button><button type="button" id="previewHide" title="Hide preview">✕</button></div></div>
+<div id="cameraControls" class="cameraControls">
+  <div class="cameraControlHead"><strong>Camera Control</strong><button type="button" id="closeCameraControls">✕</button></div>
+  <div class="cameraControlRow"><button type="button" id="zoomOut">−</button><label for="zoomRange">Zoom <span id="zoomValue">1.0×</span></label><input id="zoomRange" type="range" min="1" max="4" step="0.1" value="1"><button type="button" id="zoomIn">＋</button></div>
+  <div class="cameraControlRow cameraModes"><button type="button" id="nightMode">🌙 Night Mode: Off</button><button type="button" id="livePhoto">✨ Live Photo: Off</button></div>
+  <div class="cameraControlRow cameraActions"><button type="button" id="takePhoto">📸 Take Photo</button><button type="button" id="startVideo">🎥 Start Video</button><button type="button" id="stopVideo" disabled>⏹ Stop</button></div>
+  <small class="cameraHint">Live Photo is saved as a short video clip; Safari web apps cannot create Apple's native Live Photo format. Night Mode applies software brightening to photos.</small>
+</div><main id="messages" class="messages"></main><div id="mediaPanel" class="mediaPanel"><div id="mediaItems"></div></div>
+<div id="stickerPanel"><button class="sticker">😂</button><button class="sticker">❤️</button><button class="sticker">👍</button><button class="sticker">🥹</button><button class="sticker">😍</button><button class="sticker">🔥</button><button class="sticker">🤣</button><button class="sticker">🙏</button><button class="sticker">👏</button><button class="sticker">🎉</button><button class="sticker">😎</button><button class="sticker">🤝</button></div>
+<form id="composer" class="composer"><button type="button" class="smallbtn" id="attach" aria-label="Attach">＋</button><button type="button" class="smallbtn" id="stickerBtn" aria-label="Stickers">☺</button><div class="field"><input id="entry" autocomplete="off" placeholder="Message"></div><button type="button" class="smallbtn" id="cameraInChat" aria-label="Camera">📷</button><button type="button" class="smallbtn previewToggleBtn" id="previewToggleInChat" aria-label="Toggle camera preview" title="Open camera preview">👀</button><button type="button" class="smallbtn" id="mic" aria-label="Voice input">🎙</button><button class="round" type="submit" aria-label="Send">➤</button></form></section></div>
+<div class="galleryLockShade" id="galleryLockShade"><div class="galleryLockCard"><h2 id="galleryLockTitle">Gallery locked</h2><p id="galleryLockText">Authenticate to open your private gallery.</p><input id="galleryPasscodeInput" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Passcode" style="display:none"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px"><button type="button" id="cancelGalleryUnlock" style="background:#444;color:#fff">Cancel</button><button type="button" id="unlockGallery">Unlock</button></div></div></div>
+<div class="galleryShade" id="galleryShade"><section class="galleryPanel"><header><button id="closeGallery" class="iconbtn">‹</button><h2>Photo & video gallery</h2></header><p class="galleryHint">Each capture asks in chat: tap Y to save it to the in-app gallery, or N to discard it. Gallery saving can be enabled or disabled in Settings. Downloads are available manually from the gallery.</p><div id="galleryGrid" class="galleryGrid"></div></section></div>
+<div class="settingsShade" id="settingsShade"><section class="settingsPanel"><header><button id="closeSettings" class="iconbtn">‹</button><h2>Settings</h2></header><div class="settingsBody">
+<div class="settingRow" style="display:block"><b>🔢 Unread message count</b><small style="display:block;margin:5px 0 10px;color:#aaa">Choose a contact and set its unread badge count anytime. Long-press a contact (or right-click) for a shortcut.</small><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select id="unreadContactSelect" aria-label="Contact" style="flex:1;min-width:130px;background:#222;color:white;border:1px solid #555;border-radius:8px;padding:9px"></select><input id="unreadCountInput" type="number" min="0" max="999" value="0" aria-label="Unread count" style="width:90px;background:#222;color:white;border:1px solid #555;border-radius:8px;padding:9px"><button id="applyUnreadCount" style="background:#25d366;color:#062d25;border:0;border-radius:8px;padding:9px 12px;font-weight:700">Apply</button></div></div>
+<button class="settingRow" id="settingsGallery">▣ <span><b>Photo & video gallery</b><small>Browse, download, or delete captured media</small></span> ›</button>
+<label class="settingRow" for="demoChatsEnabled">💬 <span><b>Sample conversation content</b><small>Add clearly marked sample messages and sample image cards to the contacts for testing the chat layout.</small></span><input id="demoChatsEnabled" type="checkbox" style="width:22px;height:22px;accent-color:#25d366"></label>
+<button class="settingRow" id="loadDemoChats">🧪 <span><b>Load sample conversations</b><small>Populate empty chats with demo text and image cards. Sample messages are marked as examples.</small></span> ›</button>
+<div class="settingRow">🔐 <span><b>Gallery lock</b><small>Protect the photo and video gallery with a passcode or Face ID (if supported by Safari on this device).</small></span><select id="galleryLockMode" style="background:#222;color:white;border:1px solid #555;border-radius:8px;padding:8px"><option value="off">Off</option><option value="pin">Passcode</option><option value="face">Face ID</option></select></div>
+<button class="settingRow" id="setupGalleryLock">🛡️ <span><b>Set up gallery lock</b><small>Set/change passcode or register Face ID. Choosing Off disables the lock.</small></span> ›</button>
+<div class="settingRow">💾 <span><b>Storage location</b><small>Media is stored in this browser on this device. Use the gallery to download copies to Files.</small></span></div>
+<label class="settingRow" for="allowGallerySave">🔐 <span><b>Allow saving to app gallery</b><small>When enabled, each capture still asks Y/N in the chat before it is saved.</small></span><input id="allowGallerySave" type="checkbox" checked style="width:22px;height:22px;accent-color:#25d366"></label>
+<label class="settingRow" for="smallCameraPreview">📷 <span><b>Small camera preview</b><small>Turn the preview window on or off. Camera controls can still be used when preview is hidden.</small></span><input id="smallCameraPreview" type="checkbox" checked style="width:22px;height:22px;accent-color:#25d366"></label>
+<label class="settingRow" for="cameraPreviewPosition">↔️ <span><b>Preview position</b><small>Choose which corner the floating camera window uses.</small></span><select id="cameraPreviewPosition" style="background:#222;color:white;border:1px solid #555;border-radius:8px;padding:8px"><option value="top-right">Top right</option><option value="top-left">Top left</option><option value="bottom-right">Bottom right</option><option value="bottom-left">Bottom left</option></select></label>
+<label class="settingRow" for="cameraPreviewSize">↗️ <span><b>Preview size</b><small>Resize the floating camera window.</small></span><select id="cameraPreviewSize" style="background:#222;color:white;border:1px solid #555;border-radius:8px;padding:8px"><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option></select></label>
+<label class="settingRow" for="cameraHoldSeconds">⏱️ <span><b>Camera preview duration after capture</b><small>Keep the camera preview visible briefly after taking a photo or finishing a Live Photo, then close the camera and return to the chat button.</small></span><select id="cameraHoldSeconds" style="background:#222;color:white;border:1px solid #555;border-radius:8px;padding:8px"><option value="0">Immediately</option><option value="3">3 seconds</option><option value="5" selected>5 seconds</option><option value="8">8 seconds</option></select></label>
+<button class="settingRow" id="clearMedia">🗑 <span><b>Delete all captured media</b><small>Delete photos and videos stored by this app</small></span> ›</button>
+<div class="settingRow">⌨️ <span><b>Camera commands</b><small>Camera Control: 📷 · Preview/controls: 👀 · Photo: ph or 👍 · Video start/stop: v or 🤣 · Front camera: f or 😳 · Rear camera: r or 😎</small></span></div>
+<div class="settingRow">🎙 <span><b>Voice input</b><small>Tap the microphone; speech recognition depends on Safari/iOS support.</small></span></div>
+<div class="settingRow">💬 <span><b>Replies</b><small>Replies are local simulated responses, not a live AI model. Connecting real AI requires a secure backend.</small></span></div>
+<div class="settingRow">🔒 <span><b>Privacy</b><small>Media stays in this browser on this device unless you download or share it. This is a demo, not a real WhatsApp service.</small></span></div>
+<div class="settingRow">📖 <span><b>Usage guide</b><small>Open a chat, type a message, or send a single camera command. Use ☺ for stickers and ▣ for the gallery. Use Settings to manage stored media and camera preview options.</small></span></div>
+</div></section></div>
+<div class="modalShade" id="modalShade"><div class="modal"><h3 id="modalTitle">New chat</h3><input id="modalInput" placeholder="Contact or group name"><div class="modalActions"><button id="cancel">Cancel</button><button class="ok" id="save">Save</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id), KEY='chats-full-v10';
+const CAM_PREFS_KEY='ghostChatCameraPrefs';
+function getCameraPrefs(){try{return Object.assign({smallPreview:true,holdSeconds:5,previewPosition:'top-right',previewSize:'small'},JSON.parse(localStorage.getItem(CAM_PREFS_KEY)||'{}'))}catch(e){return {smallPreview:true,holdSeconds:5,previewPosition:'top-right',previewSize:'small'}}}
+function saveCameraPrefs(){const p={smallPreview:$('smallCameraPreview').checked,holdSeconds:Number($('cameraHoldSeconds').value)||0,previewPosition:$('cameraPreviewPosition').value,previewSize:$('cameraPreviewSize').value};localStorage.setItem(CAM_PREFS_KEY,JSON.stringify(p));applyCameraPreviewSize();return p}
+function applyCameraPreviewSize(){const p=getCameraPrefs(),el=$('previewWrap');el.classList.toggle('smallPreview',!!p.smallPreview);el.classList.remove('preview-pos-top-left','preview-pos-top-right','preview-pos-bottom-left','preview-pos-bottom-right','preview-size-small','preview-size-medium','preview-size-large');el.classList.add('preview-pos-'+(p.previewPosition||'top-right'),'preview-size-'+(p.previewSize||'small'));el.style.display=p.smallPreview?'':'none'}
+function saveFloatingPreviewPrefs(patch){const old=getCameraPrefs(),next={...old,...patch};localStorage.setItem(CAM_PREFS_KEY,JSON.stringify(next));if($('smallCameraPreview'))$('smallCameraPreview').checked=!!next.smallPreview;if($('cameraPreviewPosition'))$('cameraPreviewPosition').value=next.previewPosition;if($('cameraPreviewSize'))$('cameraPreviewSize').value=next.previewSize;applyCameraPreviewSize();return next}
+function moveFloatingPreview(){const p=getCameraPrefs(),positions=['top-right','top-left','bottom-left','bottom-right'];const i=positions.indexOf(p.previewPosition||'top-right');saveFloatingPreviewPrefs({previewPosition:positions[(i+1)%positions.length]});toast('Camera preview moved.')}
+function resizeFloatingPreview(){const p=getCameraPrefs(),sizes=['small','medium','large'];const i=sizes.indexOf(p.previewSize||'small');saveFloatingPreviewPrefs({previewSize:sizes[(i+1)%sizes.length]});toast('Camera preview size changed.')}
+function toggleFloatingPreview(){const p=getCameraPrefs();if(!p.smallPreview){saveFloatingPreviewPrefs({smallPreview:true});$('previewWrap').classList.add('show');if(!stream)startCamera().catch(e=>toast('Camera error: '+e.message));else applyCameraPreviewSize();return}saveFloatingPreviewPrefs({smallPreview:false});$('previewWrap').classList.remove('show');}
+
+function finishCaptureAfterDelay(){const p=getCameraPrefs();if(window.__cameraFinishTimer)clearTimeout(window.__cameraFinishTimer);if(p.holdSeconds<=0){finishCaptureUI();return}window.__cameraFinishTimer=setTimeout(()=>{finishCaptureUI();window.__cameraFinishTimer=null},p.holdSeconds*1000)}
+
+const initial={chats:[
+{id:'1',name:'Ahmed',avatar:'A',messages:[]},{id:'2',name:'Family Group',avatar:'👥',isGroup:true,messages:[]},{id:'3',name:'Friend',avatar:'🙂',isFavorite:true,messages:[]},{id:'4',name:'My Notes',avatar:'✎',messages:[]},{id:'5',name:'Project Team',avatar:'👥',isGroup:true,messages:[]},{id:'6',name:'Friends Group',avatar:'👥',isGroup:true,isFavorite:true,messages:[]}
+],archived:[]};
+let state=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||JSON.parse(sessionStorage.getItem(KEY+'_backup'))||null}catch(e){try{return JSON.parse(sessionStorage.getItem(KEY+'_backup'))||null}catch(_){return null}}})()||initial;
+// Seed one contact with a realistic-looking but fictional demo chat; it persists like other messages.
+try{const demo=state.chats.find(c=>c.id==='1');if(demo&&(!Array.isArray(demo.messages)||demo.messages.length===0)){demo.messages=[{text:'صباح الخير يا أحمد ☀️',who:'bot',time:'09:12'},{text:'صباح النور 😊',who:'user',time:'09:13'},{text:'عامل إيه؟ أخبارك إيه؟',who:'bot',time:'09:13'},{text:'الحمد لله تمام ❤️',who:'user',time:'09:14'},{sticker:'😂',who:'bot',time:'09:14'},{text:'بعتلك اللوكيشن، هنتقابل الساعة ٦؟ 📍',who:'bot',time:'09:16'},{text:'تمام يا نجم 👍',who:'user',time:'09:17'},{sticker:'❤️',who:'bot',time:'09:17'},{text:'متنساش تجيب الصور معاك 📸',who:'bot',time:'09:18'}];demo.unread=3;localStorage.setItem('chats-full-v10',JSON.stringify(state));}}catch(e){}
+let activeId=null,activeFilter='all',stream=null,recorder=null,chunks=[],facing='environment',recognition=null,modalAction=null,zoomLevel=1,nightModeOn=false,livePhotoOn=false;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now=()=>new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+function saveState(){try{const snapshot=JSON.stringify(state);localStorage.setItem(KEY,snapshot);try{sessionStorage.setItem(KEY+'_backup',snapshot)}catch(_){} }catch(e){toast('Storage is full. Try a smaller contact photo or remove large media.');}}
+window.addEventListener('pagehide',()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}});window.addEventListener('beforeunload',()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}});
+function cur(){return state.chats.find(c=>c.id===activeId)}
+function last(c){const m=c.messages.at(-1);return m?(m.text||m.sticker||m.label||'Media'):'Tap to start chatting'}
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),3000)}
+function renderList(){const q=$('search').value.toLowerCase();$('chatlist').innerHTML='';$('groupCount').textContent=state.chats.filter(c=>c.isGroup).length;$('unreadCount').textContent=state.chats.reduce((n,c)=>n+(c.unread||0),0);$('archivedCount').textContent=state.archived.length;
+state.chats.filter(c=>(activeFilter==='all'||(activeFilter==='groups'&&c.isGroup)||(activeFilter==='favorites'&&c.isFavorite)||(activeFilter==='unread'&&(c.unread||0)>0))&&(c.name.toLowerCase().includes(q)||last(c).toLowerCase().includes(q))).forEach(c=>{const d=document.createElement('div');d.className='chatitem';const av=document.createElement('div');av.className='avatar';if(c.avatarData){const im=document.createElement('img');im.src=c.avatarData;av.append(im)}else av.textContent=c.avatar||c.name[0];const info=document.createElement('div');info.className='chatinfo';const n=document.createElement('div');n.className='chatname';n.textContent=c.name;const l=document.createElement('div');l.className='last';l.textContent=last(c);info.append(n,l);const right=document.createElement('div');right.className='chatRight';const tm=document.createElement('div');tm.className='time';tm.textContent=c.messages.at(-1)?.time||'';right.append(tm);if(c.unread>0){const badge=document.createElement('span');badge.className='unreadBadge';badge.textContent=c.unread>99?'99+':String(c.unread);right.append(badge)}d.append(av,info,right);d.onclick=()=>openChat(c.id);d.oncontextmenu=e=>{e.preventDefault();const value=prompt('Set unread message count (0–999) for '+c.name, String(c.unread||0));if(value!==null){const count=Math.max(0,Math.min(999,parseInt(value,10)||0));c.unread=count;saveState();renderList();toast('Unread count updated.')}};d.ontouchstart=()=>{d._longPress=setTimeout(()=>{const value=prompt('Set unread message count (0–999) for '+c.name,String(c.unread||0));if(value!==null){c.unread=Math.max(0,Math.min(999,parseInt(value,10)||0));saveState();renderList();toast('Unread count updated.')}},750)};d.ontouchend=d.ontouchmove=()=>clearTimeout(d._longPress);$('chatlist').append(d)})}
+function openChat(id){activeId=id;const c=cur();c.unread=0;saveState();$('listScreen').style.display='none';$('chatScreen').style.display='flex';$('mediaPanel').classList.remove('show');$('stickerPanel').classList.remove('show');renderChat()}
+function goBack(){if(recorder&&recorder.state==='recording'){toast('Stop video recording before leaving the chat.');return}stopStream();$('chatScreen').style.display='none';$('listScreen').style.display='flex';renderList()}
+function quickExit(){
+ try{if(recorder&&recorder.state!=='inactive')recorder.stop()}catch(e){}
+ if(stream){stream.getTracks().forEach(t=>{try{t.stop()}catch(e){}});stream=null}
+ $('preview').srcObject=null;$('previewWrap').classList.remove('show');$('cameraControls').classList.remove('show');$('recordStatus').classList.remove('on');$('stopVideo').disabled=true;
+ $('galleryShade').classList.remove('show');$('galleryLockShade')?.classList.remove('show');$('settingsShade').classList.remove('show');$('mediaPanel').classList.remove('show');$('stickerPanel').classList.remove('show');
+ activeId=null;$('chatScreen').style.display='none';$('listScreen').style.display='flex';renderList();toast('Quick exit: camera stopped and returned to contacts.');
+}
+function renderChat(){const c=cur();if(!c)return;$('headName').textContent=c.name;$('headSubtitle').textContent=c.isGroup?'Group · simulated chat':'online · simulated chat';$('headAvatar').innerHTML='';if(c.avatarData){const im=document.createElement('img');im.src=c.avatarData;im.style='width:100%;height:100%;object-fit:cover;border-radius:50%';$('headAvatar').append(im)}else $('headAvatar').textContent=c.avatar||c.name[0];$('messages').innerHTML='<div class="day">TODAY</div>';c.messages.forEach(draw);renderMedia()}
+function draw(m){const r=document.createElement('div');r.className='row '+(m.who==='user'?'user':'bot');const b=document.createElement('div');b.className='bubble';b.dir=/[\u0600-\u06FF]/.test(m.text||'')?'rtl':'ltr';if(m.sticker){b.classList.add('stickerBubble');b.textContent=m.sticker}else b.textContent=m.text||'';if(m.mediaId){const a=document.createElement('button');a.className='mediaLink';a.textContent=(m.label||'Media')+' · Open in gallery ▣';a.onclick=()=>toggleMedia(true);b.append(a)}if(m.sampleImage){const card=document.createElement('div');card.className='sampleMediaCard';const art=document.createElement('div');art.className='sampleArt';art.textContent=m.sampleImage;const cap=document.createElement('div');cap.textContent=m.sampleCaption||'Sample image';const tag=document.createElement('small');tag.textContent='DEMO · SAMPLE CONTENT';card.append(art,cap,tag);b.append(card)}const meta=document.createElement('div');meta.className='meta';meta.textContent=m.time||now();b.append(meta);r.append(b);$('messages').append(r);$('messages').scrollTop=$('messages').scrollHeight}
+function add(text,who='bot',extra={}){const c=cur();if(!c)return;const m={text,who,time:now(),...extra};c.messages.push(m);saveState();draw(m);renderList()}
+const DB='chats-media-v13',STORE='media';
+function openDB(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window)){reject(new Error('IndexedDB is unavailable'));return}const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE,{keyPath:'id'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Could not open browser storage'));r.onblocked=()=>reject(new Error('Browser storage upgrade is blocked'))})}
+async function dbAll(){const db=await openDB();try{return await new Promise((res,rej)=>{const r=db.transaction(STORE,'readonly').objectStore(STORE).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error||new Error('Could not read gallery'))})}finally{db.close()}}
+async function dbPut(item){const db=await openDB();try{await new Promise((res,rej)=>{let settled=false;const t=db.transaction(STORE,'readwrite');const req=t.objectStore(STORE).put(item);req.onerror=()=>{if(!settled){settled=true;rej(req.error||new Error('IndexedDB request failed'))}};t.oncomplete=()=>{if(!settled){settled=true;res()}};t.onerror=()=>{if(!settled){settled=true;rej(t.error||req.error||new Error('IndexedDB transaction failed'))}};t.onabort=()=>{if(!settled){settled=true;rej(t.error||req.error||new Error('Storage transaction aborted; check Safari website data/storage settings'))}}})}finally{db.close()}}
+async function dbDelete(id){const db=await openDB();try{await new Promise((res,rej)=>{const t=db.transaction(STORE,'readwrite');t.objectStore(STORE).delete(id);t.oncomplete=res;t.onerror=()=>rej(t.error)})}finally{db.close()}}
+async function addMedia(blob,name,label){
+ const c=cur();if(!c)throw new Error('Open a chat before saving media.');
+ const id='m'+Date.now()+Math.random().toString(16).slice(2);
+ await dbPut({id,blob,name,label,time:now(),chatId:activeId,type:blob.type});
+ const item={text:'',who:'bot',time:now(),mediaId:id,label,name};
+ c.messages.push(item);saveState();renderChat();renderList();renderMedia();toast('Saved to the in-app gallery.');
+}
+function askSave(blob,name,label){
+ const row=document.createElement('div');row.className='row bot';
+ const bubble=document.createElement('div');bubble.className='bubble';
+ const question=document.createElement('div');question.textContent=localStorage.getItem('ghostAllowGallerySave')==='no'?'Gallery saving is disabled in Settings. Enable “Allow saving to app gallery” to save this capture.':`Save this ${label.toLowerCase()} to the app gallery?`; 
+ const actions=document.createElement('div');actions.className='saveChoiceActions';
+ const yes=document.createElement('button');yes.type='button';yes.textContent='Y';yes.className='saveChoiceYes';yes.disabled=localStorage.getItem('ghostAllowGallerySave')==='no';
+ const no=document.createElement('button');no.type='button';no.textContent='N';no.className='saveChoiceNo';
+ actions.append(yes,no);bubble.append(question,actions);row.append(bubble);$('messages').append(row);$('messages').scrollTop=$('messages').scrollHeight;
+ no.onclick=()=>{row.remove();toast('Capture discarded; nothing was saved.');};
+ yes.onclick=async()=>{if(localStorage.getItem('ghostAllowGallerySave')==='no'){toast('Enable Allow saving to app gallery in Settings first.');return}yes.disabled=true;no.disabled=true;yes.textContent='…';try{await addMedia(blob,name,label);row.remove()}catch(e){yes.disabled=false;no.disabled=false;yes.textContent='Y';toast('Could not save in the app gallery: '+e.message)}};
+}
+async function renderMedia(){
+ const grid=$('galleryGrid'); if(!grid)return;
+ grid.innerHTML='<div class="galleryEmpty">Loading gallery…</div>';
+ try{
+  const all=(await dbAll()).slice().reverse();grid.innerHTML='';
+  if(!all.length){grid.innerHTML='<div class="galleryEmpty">No captured photos or videos yet.<br>Tap 📷 in the chat to open Camera Control. After capturing, the camera closes and the controls return to the 📷 button.</div>';return}
+  for(const m of all){
+   const card=document.createElement('article');card.className='galleryCard';
+   const url=URL.createObjectURL(m.blob);const isVideo=(m.type||m.blob?.type||'').startsWith('video/');
+   const preview=document.createElement(isVideo?'video':'img');preview.className='galleryPreview';preview.src=url;
+   if(isVideo){preview.controls=true;preview.playsInline=true}else preview.alt='Captured photo';
+   const meta=document.createElement('div');meta.className='galleryMeta';meta.textContent=(m.label||'Media')+' · '+(m.time||'')+' · '+(m.name||'');
+   const buttons=document.createElement('div');buttons.className='galleryButtons';
+   const dl=document.createElement('a');dl.href=url;dl.download=m.name||'Ghost-media';dl.textContent='Download / Save';
+   const del=document.createElement('button');del.textContent='Delete';del.onclick=async()=>{if(!confirm('Delete this photo/video from the app gallery?'))return;await dbDelete(m.id);const c=state.chats.find(x=>x.id===m.chatId);if(c){c.messages=c.messages.filter(x=>x.mediaId!==m.id);saveState();if(activeId===c.id)renderChat()}renderList();renderMedia()};
+   buttons.append(dl,del);card.append(preview,meta,buttons);grid.append(card);
+  }
+ }catch(e){grid.innerHTML='<div class="galleryEmpty">Gallery could not be loaded. Open this site in Safari and try again.</div>'}
+}
+async function loadSampleConversations(){
+ const examples={
+ '1':[{text:'صباح الخير! عامل إيه؟',who:'bot'},{text:'بعتلك الصور اللي اتكلمنا عنها.',who:'bot'},{text:'📷 صورة من الرحلة',who:'bot',sampleImage:'🌅',sampleCaption:'Sample photo · رحلة'},{text:'لما تفضى كلمني 😊',who:'bot'}],
+ '2':[{text:'صباح الخير يا جماعة ❤️',who:'bot'},{text:'مين جاي يوم الجمعة؟',who:'bot'},{text:'دي صورة الأكل اللي قولتلكم عليه 😄',who:'bot',sampleImage:'🍲',sampleCaption:'Sample photo · أكل'},{text:'تمام، أشوفكم على خير',who:'bot'}],
+ '3':[{text:'إزيك يا صاحبي؟',who:'bot'},{text:'افتكرت المكان ده؟ 😂',who:'bot',sampleImage:'🏖️',sampleCaption:'Sample photo · مكان'},{text:'ابعتلي لما توصل',who:'bot'}],
+ '4':[{text:'ملاحظات تجريبية للشات.',who:'bot'},{text:'فكرة: نرتب الصور في ألبوم.',who:'bot'},{text:'تذكير: تجربة إعدادات الكاميرا.',who:'bot'}],
+ '5':[{text:'تم تحديث ملف المشروع.',who:'bot'},{text:'دي صورة توضيحية للواجهة.',who:'bot',sampleImage:'🖥️',sampleCaption:'Sample image · واجهة'},{text:'راجعوا النسخة قبل النشر.',who:'bot'}],
+ '6':[{text:'مساء الخير يا جماعة 👋',who:'bot'},{text:'حد عنده اقتراح للويك إند؟',who:'bot'},{text:'دي فكرة ممكن نجربها.',who:'bot',sampleImage:'🌳',sampleCaption:'Sample photo · فكرة'},{text:'مستني رأيكم 😊',who:'bot'}]
+ };
+ let added=0;
+ state.chats.forEach(c=>{if(c.messages?.length)return;const arr=examples[c.id]||[{text:'Sample conversation message',who:'bot'}];c.messages=arr.map((m,i)=>({...m,time:now()}));c.unread=Math.min(arr.length,3);added+=arr.length});
+ saveState();renderList();if(activeId)renderChat();toast(added?'Sample conversations added. Messages are marked as demo content.':'No empty chats found; sample content was not added.');
+}
+async function toggleMedia(force){
+ const shouldOpen=force===true?true:!$('galleryShade').classList.contains('show');
+ if(!shouldOpen){$('galleryShade').classList.remove('show');return}
+ if(!(await authenticateGallery()))return;
+ $('galleryShade').classList.add('show');renderMedia()
+}
+const GALLERY_LOCK_KEY='ghostChatGalleryLock';
+function galleryLockData(){try{return JSON.parse(localStorage.getItem(GALLERY_LOCK_KEY)||'{}')}catch(e){return {}}}
+function bytesToB64(bytes){return btoa(String.fromCharCode(...new Uint8Array(bytes)))}
+function b64ToBytes(value){return Uint8Array.from(atob(value),c=>c.charCodeAt(0))}
+async function setupGalleryLock(){
+ const mode=$('galleryLockMode').value;
+ if(mode==='off'){localStorage.removeItem(GALLERY_LOCK_KEY);toast('Gallery lock disabled.');return}
+ if(mode==='pin'){
+  const pin=prompt('Create a gallery passcode (at least 4 characters):');if(pin===null)return;
+  if(pin.trim().length<4){toast('Passcode must be at least 4 characters.');return}
+  const confirmPin=prompt('Confirm gallery passcode:');if(pin!==confirmPin){toast('Passcodes do not match.');return}
+  localStorage.setItem(GALLERY_LOCK_KEY,JSON.stringify({mode:'pin',pin}));toast('Gallery passcode enabled.');return
+ }
+ if(mode==='face'){
+  if(!window.PublicKeyCredential||!navigator.credentials){toast('Face ID/WebAuthn is not supported here. Use Passcode instead.');return}
+  try{
+   const challenge=crypto.getRandomValues(new Uint8Array(32));
+   const cred=await navigator.credentials.create({publicKey:{challenge,rp:{name:'Ghost Chat'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'ghost-chat-gallery',displayName:'Ghost Chat Gallery'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},timeout:60000,attestation:'none'}});
+   if(!cred)throw new Error('No credential returned');
+   localStorage.setItem(GALLERY_LOCK_KEY,JSON.stringify({mode:'face',credentialId:bytesToB64(cred.rawId)}));
+   toast('Face ID lock registered.');return
+  }catch(e){toast('Could not set up Face ID: '+(e.message||'Use Passcode instead.'));return}
+ }
+}
+async function authenticateGallery(){
+ const lock=galleryLockData();if(!lock.mode||lock.mode==='off')return true;
+ $('galleryLockTitle').textContent=lock.mode==='face'?'Unlock with Face ID':'Gallery passcode';
+ $('galleryLockText').textContent=lock.mode==='face'?'Authenticate using this device’s biometrics.':'Enter your passcode to open the gallery.';
+ $('galleryPasscodeInput').style.display=lock.mode==='pin'?'block':'none';$('galleryPasscodeInput').value='';
+ $('galleryLockShade').classList.add('show');
+ return await new Promise(resolve=>{
+  let done=false;const finish=v=>{if(done)return;done=true;$('galleryLockShade').classList.remove('show');$('unlockGallery').onclick=null;$('cancelGalleryUnlock').onclick=null;resolve(v)};
+  $('cancelGalleryUnlock').onclick=()=>finish(false);
+  $('unlockGallery').onclick=async()=>{
+   if(lock.mode==='pin'){if($('galleryPasscodeInput').value===lock.pin)finish(true);else toast('Incorrect passcode.');return}
+   try{
+    const cred=await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:b64ToBytes(lock.credentialId)}],userVerification:'required',timeout:60000}});
+    finish(!!cred)
+   }catch(e){toast('Face ID authentication failed or was cancelled.');}
+  };
+  if(lock.mode==='face')$('unlockGallery').textContent='Use Face ID';else $('unlockGallery').textContent='Unlock';
+ });
+}
+function downloadCaptured(blob,name){/* Saving is user-confirmed through Y/N; download only from the gallery. */}
+
+function toggleCameraControls(){const panel=$('cameraControls');if(panel.classList.contains('show'))closeCameraControls();else{panel.classList.add('show');if(stream){$('previewWrap').classList.add('show');applyCameraPreviewSize()}}}
+function closeCameraControls(){if(recorder&&recorder.state!=='inactive'){try{recorder.stop()}catch(e){}}stopStream();$('cameraControls').classList.remove('show');$('previewWrap').classList.remove('show');}
+function finishCaptureUI(){if(recorder&&recorder.state!=='inactive')return;stopStream();$('cameraControls').classList.remove('show');$('previewWrap').classList.remove('show');}
+async function startCamera(){
+ if(!navigator.mediaDevices?.getUserMedia)throw Error('Open the HTTPS site in Safari and allow camera access.');
+ if(stream){$('previewWrap').classList.add('show');applyCameraPreviewSize();return}
+ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
+ $('preview').srcObject=stream;$('previewWrap').classList.add('show');applyCameraPreviewSize();
+ await $('preview').play().catch(()=>{});updateZoomUI();
+}
+function stopStream(){if(recorder&&recorder.state!=='inactive')return;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('preview').srcObject=null;$('previewWrap').classList.remove('show')}
+function updateZoomUI(){ $('zoomValue').textContent=zoomLevel.toFixed(1)+'×'; $('zoomRange').value=zoomLevel; $('preview').style.transform=(facing==='user'?'scaleX(-1) ':'')+'scale('+zoomLevel+')';}
+async function setZoom(value){
+ zoomLevel=Math.max(1,Math.min(4,Number(value)||1));updateZoomUI();
+ const track=stream?.getVideoTracks?.()[0];if(track?.getCapabilities){const caps=track.getCapabilities();if(caps.zoom){const z=Math.max(caps.zoom.min,Math.min(caps.zoom.max,zoomLevel));try{await track.applyConstraints({advanced:[{zoom:z}]})}catch(e){}}}
+}
+async function makeCaptureBlob(label){
+ const v=$('preview'),canvas=document.createElement('canvas');
+ const vw=v.videoWidth,vh=v.videoHeight;if(!vw||!vh)throw new Error('Camera has not produced an image yet. Try again.');
+ const cropW=vw/zoomLevel,cropH=vh/zoomLevel, sx=(vw-cropW)/2, sy=(vh-cropH)/2;
+ canvas.width=vw;canvas.height=vh;const ctx=canvas.getContext('2d');
+ if(facing==='user'){ctx.translate(canvas.width,0);ctx.scale(-1,1)}
+ ctx.drawImage(v,sx,sy,cropW,cropH,0,0,canvas.width,canvas.height);
+ if(label==='Photo'&&nightModeOn){const img=ctx.getImageData(0,0,canvas.width,canvas.height),d=img.data;for(let i=0;i<d.length;i+=4){d[i]=Math.min(255,d[i]*1.28+8);d[i+1]=Math.min(255,d[i+1]*1.28+8);d[i+2]=Math.min(255,d[i+2]*1.28+8)}ctx.putImageData(img,0,0)}
+ return await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.94));
+}
+async function photo(){
+ await startCamera();await new Promise(r=>{$('preview').readyState>=2?r():$('preview').onloadeddata=r});
+ if(livePhotoOn){await captureLivePhoto();return}
+ const blob=await makeCaptureBlob('Photo');if(!blob)throw new Error('Could not create photo from camera.');
+ askSave(blob,'Chats-photo-'+Date.now()+'.jpg','Photo');$('cameraControls').classList.remove('show');finishCaptureAfterDelay();
+}
+async function captureLivePhoto(){
+ if(!window.MediaRecorder){toast('Live Photo clips are not supported by this browser.');return}
+ if(recorder&&recorder.state!=='inactive')return;
+ const track=stream.getVideoTracks()[0];let liveStream;
+ try{liveStream=new MediaStream([track]);}catch(e){toast('Live Photo is not supported by this browser.');return}
+ chunks=[];let opt={};if(MediaRecorder.isTypeSupported('video/mp4'))opt={mimeType:'video/mp4'};else if(MediaRecorder.isTypeSupported('video/webm;codecs=vp8'))opt={mimeType:'video/webm;codecs=vp8'};
+ recorder=new MediaRecorder(liveStream,opt);recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+ recorder.onstop=()=>{const type=recorder.mimeType||'video/webm',ext=type.includes('mp4')?'mp4':'webm';const blob=new Blob(chunks,{type});askSave(blob,'Chats-live-'+Date.now()+'.'+ext,'Live Photo clip');$('recordStatus').classList.remove('on');$('stopVideo').disabled=true;$('cameraControls').classList.remove('show');finishCaptureAfterDelay();};
+ recorder.start();$('recordStatus').classList.add('on');$('stopVideo').disabled=false;toast('Recording a 2-second Live Photo clip…');
+ setTimeout(()=>{if(recorder&&recorder.state==='recording')recorder.stop()},2000);
+}
+async function video(){
+ if(recorder&&recorder.state==='recording'){recorder.stop();$('recordStatus').classList.remove('on');$('stopVideo').disabled=true;return}
+ await startCamera();chunks=[];
+ const opt=MediaRecorder.isTypeSupported('video/mp4')?{mimeType:'video/mp4'}:(MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')?{mimeType:'video/webm;codecs=vp8,opus'}:{});
+ recorder=new MediaRecorder(stream,opt);recorder.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+ recorder.onstop=()=>{const type=recorder.mimeType||'video/webm',ext=type.includes('mp4')?'mp4':'webm';const blob=new Blob(chunks,{type});askSave(blob,'Chats-video-'+Date.now()+'.'+ext,'Video');$('recordStatus').classList.remove('on');$('stopVideo').disabled=true;finishCaptureUI();};
+ recorder.start();$('recordStatus').classList.add('on');$('stopVideo').disabled=false;toast('Recording started. Tap Stop to finish.');
+}
+async function switchCam(to){if(recorder&&recorder.state==='recording'){toast('Stop recording before switching cameras.');return}if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}facing=to;await startCamera();toast(to==='user'?'Front camera enabled.':'Rear camera enabled.')}
+function reply(t){const s=t.trim().toLowerCase();if(/^(hi|hello|hey|good morning|good evening)/.test(s))return'Hey 😊 How are you doing?';if(/^(مرحبا|اهلا|أهلا|السلام عليكم|صباح الخير|مساء الخير|إزيك|ازيك)/.test(s))return'أهلًا 😊 عامل إيه؟';if(/(sad|upset|stressed|worried|قلقان|زعلان|مضايق|تعبان)/.test(s))return /[\u0600-\u06FF]/.test(s)?'مالك؟ احكيلي إيه اللي حصل، ونفكر فيه سوا.':'That sounds stressful. Want to tell me what happened?';if(/(thank|thanks|شكرا|شكرًا)/.test(s))return /[\u0600-\u06FF]/.test(s)?'العفو يا صاحبي ❤️':'You’re welcome ❤️';if(/(work|job|manager|شغل|مدير|وظيفة)/.test(s))return /[\u0600-\u06FF]/.test(s)?'إيه اللي حصل في الشغل؟ محتاج رأيي ولا حابب تفضفض؟':'What happened at work? Do you want advice or just to talk it through?';if(/(why|how|what|when|where|ليه|لماذا|ازاي|إزاي|كيف|متى|أين)/.test(s))return /[\u0600-\u06FF]/.test(s)?'ممكن توضحلي تفاصيل أكتر علشان أرد عليك بشكل أدق؟':'Can you share a little more context so I can answer more accurately?';if(/[؟?]$/.test(s))return /[\u0600-\u06FF]/.test(s)?'على حسب التفاصيل. احكيلي أكتر عن الموقف.':'It depends on the details. Tell me a little more about the situation.';if(s.length<12)return /[\u0600-\u06FF]/.test(s)?'تمام، كمّل أنا معاك.':'Got it. Go on, I’m listening.';return /[\u0600-\u06FF]/.test(s)?'فاهمك. إيه اللي حصل بعد كده؟':'I get what you mean. What happened next?'}
+async function handle(raw){const s=raw.trim().toLowerCase();if(!s)return;add(raw,'user');try{if(s==='👀'||s==='eye'||s==='preview'){await startCamera();$('cameraControls').classList.add('show');$('previewWrap').classList.add('show');applyCameraPreviewSize();}else if(s==='ph'||s==='👍')await photo();else if(s==='v'||s==='🤣')await video();else if(s==='f'||s==='😳')await switchCam('user');else if(s==='r'||s==='😎')await switchCam('environment');else setTimeout(()=>add(reply(raw)),600)}catch(e){toast('Camera error: '+e.message)}}
+function openModal(title,val,fn){modalAction=fn;$('modalTitle').textContent=title;$('modalInput').value=val||'';$('modalShade').classList.add('show')}
+function closeModal(){$('modalShade').classList.remove('show');modalAction=null}
+$('filterTabs').querySelectorAll('.filter').forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;$('filterTabs').querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));renderList()});
+$('search').oninput=renderList;
+$('newChat').onclick=()=>openModal('New chat or group','',name=>{name=name.trim();if(!name)return;const c={id:'c'+Date.now(),name,avatar:/group/i.test(name)?'👥':name[0],isGroup:/group/i.test(name),messages:[]};state.chats.unshift(c);saveState();renderList();openChat(c.id)});
+$('rename').onclick=()=>openModal('Rename chat',cur()?.name||'',name=>{if(name.trim()){cur().name=name.trim();saveState();renderChat();renderList()}});
+$('pickAvatar').onclick=()=>$('avatarFile').click();
+$('avatarFile').onchange=async e=>{const f=e.target.files?.[0];if(!f||!cur())return;try{const data=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)});const img=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=data});const canvas=document.createElement('canvas'),max=360,scale=Math.min(1,max/Math.max(img.width,img.height));canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);cur().avatarData=canvas.toDataURL('image/jpeg',0.78);saveState();renderChat();renderList();toast('Contact photo saved on this device.')}catch(err){toast('Could not save that photo. Try another image.')}e.target.value=''};
+$('back').onclick=goBack;$('showMedia').onclick=()=>toggleMedia(true);$('attach').onclick=()=>toggleMedia(true);
+$('cameraInChat').onclick=()=>toggleCameraControls();
+$('previewToggleInChat').onclick=()=>{if(stream){toggleFloatingPreview();return}startCamera().then(()=>{$('cameraControls').classList.add('show');$('previewWrap').classList.add('show');applyCameraPreviewSize()}).catch(e=>toast('Camera error: '+e.message))};
+$('previewMove').onclick=moveFloatingPreview;$('previewResize').onclick=resizeFloatingPreview;$('previewHide').onclick=()=>{saveFloatingPreviewPrefs({smallPreview:false});$('previewWrap').classList.remove('show')};
+$('cameraShortcut').onclick=()=>{if(!activeId&&state.chats[0])openChat(state.chats[0].id);toggleCameraControls()};
+$('closeCameraControls').onclick=()=>closeCameraControls();
+$('zoomRange').oninput=async e=>{try{if(!stream)await startCamera();$('previewWrap').classList.add('show');applyCameraPreviewSize();await setZoom(e.target.value)}catch(err){toast('Camera error: '+err.message)}};$('zoomOut').onclick=async()=>{try{if(!stream)await startCamera();$('previewWrap').classList.add('show');applyCameraPreviewSize();await setZoom(zoomLevel-.2)}catch(err){toast('Camera error: '+err.message)}};$('zoomIn').onclick=async()=>{try{if(!stream)await startCamera();$('previewWrap').classList.add('show');applyCameraPreviewSize();await setZoom(zoomLevel+.2)}catch(err){toast('Camera error: '+err.message)}};
+$('nightMode').onclick=()=>{nightModeOn=!nightModeOn;$('nightMode').textContent='🌙 Night Mode: '+(nightModeOn?'On':'Off');toast(nightModeOn?'Night Mode enabled for photos.':'Night Mode disabled.')};
+$('livePhoto').onclick=()=>{livePhotoOn=!livePhotoOn;$('livePhoto').textContent='✨ Live Photo: '+(livePhotoOn?'On':'Off');toast(livePhotoOn?'Live Photo enabled: takes a short video clip.':'Live Photo disabled.')};
+$('takePhoto').onclick=()=>photo().catch(e=>{finishCaptureUI();toast('Camera error: '+e.message)});$('startVideo').onclick=()=>video().catch(e=>{finishCaptureUI();toast('Camera error: '+e.message)});$('stopVideo').onclick=()=>video().catch(e=>toast('Camera error: '+e.message));
+$('stickerBtn').onclick=()=>$('stickerPanel').classList.toggle('show');$('stickerPanel').querySelectorAll('.sticker').forEach(b=>b.onclick=()=>{const c=cur();if(!c)return;const m={text:'',sticker:b.textContent,who:'user',time:now()};c.messages.push(m);saveState();draw(m);renderList();$('stickerPanel').classList.remove('show')});
+$('composer').onsubmit=e=>{e.preventDefault();const v=$('entry').value;$('entry').value='';handle(v)};
+$('mic').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('Voice input is not supported here. Try the iPhone keyboard microphone.');return}if(recognition){recognition.stop();recognition=null;return}recognition=new SR();recognition.lang=/[\u0600-\u06FF]/.test($('entry').value)?'ar-EG':'en-US';recognition.onresult=e=>$('entry').value=e.results[0][0].transcript;recognition.onend=()=>recognition=null;recognition.start()};
+function refreshUnreadEditor(){const sel=$('unreadContactSelect');if(!sel)return;const prior=sel.value;sel.innerHTML='';state.chats.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.append(o)});if(state.chats.some(c=>c.id===prior))sel.value=prior;const c=state.chats.find(c=>c.id===sel.value);$('unreadCountInput').value=c?.unread||0} $('unreadContactSelect').onchange=()=>{const c=state.chats.find(x=>x.id===$('unreadContactSelect').value);$('unreadCountInput').value=c?.unread||0};$('applyUnreadCount').onclick=()=>{const c=state.chats.find(x=>x.id===$('unreadContactSelect').value);if(!c)return;const v=Number($('unreadCountInput').value);if(!Number.isInteger(v)||v<0||v>999){toast('Enter a number from 0 to 999.');return}c.unread=v;saveState();renderList();refreshUnreadEditor();toast('Unread count saved.')};refreshUnreadEditor();
+$('openSettings').onclick=()=>{$('settingsShade').classList.add('show');refreshUnreadEditor()};$('closeSettings').onclick=()=>$('settingsShade').classList.remove('show');
+$('quickExit').onclick=quickExit;
+$('demoChatsEnabled').checked=localStorage.getItem('ghostDemoChatsEnabled')==='yes';
+$('demoChatsEnabled').onchange=()=>{localStorage.setItem('ghostDemoChatsEnabled',$('demoChatsEnabled').checked?'yes':'no');$('loadDemoChats').disabled=!$('demoChatsEnabled').checked;toast($('demoChatsEnabled').checked?'Sample content options enabled.':'Sample content options disabled.')};
+$('loadDemoChats').disabled=!$('demoChatsEnabled').checked;
+$('loadDemoChats').onclick=()=>{if(!$('demoChatsEnabled').checked){toast('Enable Sample conversation content first.');return}loadSampleConversations()};$('settingsGallery').onclick=()=>{$('settingsShade').classList.remove('show');toggleMedia(true)};$('closeGallery').onclick=()=>$('galleryShade').classList.remove('show');
+const savedGalleryLock=galleryLockData();$('galleryLockMode').value=savedGalleryLock.mode||'off';
+$('galleryLockMode').onchange=()=>{const current=galleryLockData();if($('galleryLockMode').value==='off'){localStorage.removeItem(GALLERY_LOCK_KEY);toast('Gallery lock disabled.')}else if(current.mode!==$('galleryLockMode').value)toast('Tap Set up gallery lock to finish setup.')};
+$('setupGalleryLock').onclick=async()=>{await setupGalleryLock();$('galleryLockMode').value=galleryLockData().mode||'off'};
+const cameraPrefs=getCameraPrefs();$('smallCameraPreview').checked=!!cameraPrefs.smallPreview;$('cameraHoldSeconds').value=String(cameraPrefs.holdSeconds);$('cameraPreviewPosition').value=cameraPrefs.previewPosition||'top-right';$('cameraPreviewSize').value=cameraPrefs.previewSize||'small';
+$('smallCameraPreview').onchange=saveCameraPrefs;$('cameraHoldSeconds').onchange=saveCameraPrefs;$('cameraPreviewPosition').onchange=saveCameraPrefs;$('cameraPreviewSize').onchange=saveCameraPrefs;applyCameraPreviewSize();const savePermission=$('allowGallerySave');if(savePermission){savePermission.checked=localStorage.getItem('ghostAllowGallerySave')!=='no';savePermission.onchange=()=>{try{localStorage.setItem('ghostAllowGallerySave',savePermission.checked?'yes':'no')}catch(e){};toast(savePermission.checked?'Gallery saving permission enabled; Y/N confirmation is still required.':'Gallery saving disabled in Settings.')}}
+$('clearMedia').onclick=async()=>{if(!confirm('Delete all captured photos and videos? This cannot be undone.'))return;for(const m of await dbAll())await dbDelete(m.id);state.chats.forEach(c=>c.messages=c.messages.filter(m=>!m.mediaId));saveState();if(activeId)renderChat();renderList();renderMedia();toast('All captured media deleted.')};
+$('topMenu').onclick=()=>openModal('Usage guide','Camera Control: 📷 | Photo: ph / 👍 | Video: v / 🤣 | Front: f / 😳 | Rear: r / 😎',()=>{});
+$('cancel').onclick=closeModal;$('save').onclick=()=>{modalAction?.($('modalInput').value);closeModal()};$('modalShade').onclick=e=>{if(e.target===$('modalShade'))closeModal()};
+$('archivedRow').onclick=()=>toast('Archived is a visual demo in this version.');
+renderList();
+if('serviceWorker'in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>
